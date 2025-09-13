@@ -3,39 +3,43 @@
  * Modern architecture with clean separation of concerns
  */
 
-import { exportToCSV } from './utils/csvExport';
-import { calculateMetrics } from './utils/metrics';
-import { useLocalStorage } from './hooks/useLocalStorage';
-import React, { useState, useEffect, useMemo } from 'react';
-import type {
-  Expense,
-  Income,
-  RecurringExpense,
-  TabType
-} from './types';
+import { exportToCSV } from "./utils/csvExport";
+import { calculateMetrics } from "./utils/metrics";
+import { useLocalStorage } from "./hooks/useLocalStorage";
+import React, { useState, useEffect, useMemo } from "react";
+import type { Expense, Income, RecurringExpense, TabType } from "./types";
 
 // Layout Components
-import AppLayout from './components/layout/AppLayout';
+import AppLayout from "./components/layout/AppLayout";
 
 // Page Components
-import Settings from './pages/Settings';
-import Analytics from './pages/Analytics';
+import Settings from "./pages/Settings";
+import Analytics from "./pages/Analytics";
 
 // Modal Components
-import Dashboard from './components/backup/Dashboard';
-import IncomeModal from './components/modals/IncomeModal';
-import ExpenseModal from './components/modals/ExpenseModal';
+import Dashboard from "./components/backup/Dashboard";
+import IncomeModal from "./components/modals/IncomeModal";
+import ExpenseModal from "./components/modals/ExpenseModal";
 
 const App: React.FC = () => {
   // Persistent State
-  const [theme, setTheme] = useLocalStorage<'light' | 'dark'>('theme', 'light');
-  const [expenses, setExpenses] = useLocalStorage<Expense[]>('expenses', []);
-  const [income, setIncome] = useLocalStorage<Income[]>('income', []);
-  const [monthlyBudget, setMonthlyBudget] = useLocalStorage<number>('monthlyBudget', 1500);
-  const [recurringExpenses, setRecurringExpenses] = useLocalStorage<RecurringExpense[]>('recurringExpenses', []);
+  const [theme, setTheme] = useLocalStorage<"light" | "dark">("theme", "light");
+  const [expenses, setExpenses] = useLocalStorage<Expense[]>("expenses", []);
+  const [income, setIncome] = useLocalStorage<Income[]>("income", []);
+  const [monthlyBudget, setMonthlyBudget] = useLocalStorage<number>(
+    "monthlyBudget",
+    800
+  );
+  const [recurringExpenses, setRecurringExpenses] = useLocalStorage<
+    RecurringExpense[]
+  >("recurringExpenses", []);
+  const [autoBackup, setAutoBackup] = useLocalStorage<boolean>(
+    "autoBackup",
+    false
+  );
 
   // UI State
-  const [currentPage, setCurrentPage] = useState<TabType>('home');
+  const [currentPage, setCurrentPage] = useState<TabType>("home");
   const [expenseModalOpen, setExpenseModalOpen] = useState(false);
   const [incomeModalOpen, setIncomeModalOpen] = useState(false);
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
@@ -53,33 +57,79 @@ const App: React.FC = () => {
       const currentMonth = today.getMonth();
       const currentYear = today.getFullYear();
 
-      recurringExpenses.forEach(recurring => {
-		console.log(recurring.lastProcessed);
-		
+      recurringExpenses.forEach((recurring) => {
+        console.log(recurring.lastProcessed);
+
         const lastProcessed = new Date(recurring.lastProcessed || 0);
-        if (lastProcessed.getMonth() !== currentMonth || lastProcessed.getFullYear() !== currentYear) {
+        if (
+          lastProcessed.getMonth() !== currentMonth ||
+          lastProcessed.getFullYear() !== currentYear
+        ) {
           const newExpense: Expense = {
             id: Date.now() + Math.random(),
             amount: recurring.amount,
             category: recurring.category,
             date: new Date().toISOString(),
-            notes: `[Recurring] ${recurring.notes || ''}`,
-            isRecurring: true
+            notes: `[Recurring] ${recurring.notes || ""}`,
+            isRecurring: true,
           };
-          
-          setExpenses(prev => [...prev, newExpense]);
-          setRecurringExpenses(prev => 
-            prev.map(r => r.id === recurring.id 
-              ? { ...r, lastProcessed: today.toISOString() } 
-              : r
+
+          setExpenses((prev) => [...prev, newExpense]);
+          setRecurringExpenses((prev) =>
+            prev.map((r) =>
+              r.id === recurring.id
+                ? { ...r, lastProcessed: today.toISOString() }
+                : r
             )
           );
         }
       });
     };
-    
+
     processRecurring();
   }, []);
+
+  useEffect(() => {
+    if (!autoBackup) return;
+
+    const performBackup = () => {
+      const now = new Date();
+      console.log(`Auto-backup at ${now.toLocaleString()}`);
+
+      // Export to csv
+      exportToCSV(expenses, income);
+
+      // Store last backup time
+      localStorage.setItem("lastBackupTime", now.toISOString());
+    };
+
+    // Check if backup needed.
+    const checkAndBackup = () => {
+      console.log("Checking for backup...");
+      const lastBackup = localStorage.getItem("lastBackupTime");
+      const lastBackupDate = lastBackup ? new Date(lastBackup) : null;
+      const now = new Date();
+
+      // If no previous backup or more than 7 days ago
+      if (
+        !lastBackupDate ||
+        now.getTime() - lastBackupDate.getTime() > 3 * 24 * 60 * 60 * 1000
+      ) {
+        console.log("Backing up...");
+        performBackup();
+      }
+    };
+
+    checkAndBackup();
+
+    const interval = setInterval(checkAndBackup, 1000 * 3600);
+
+    return () => {
+      //   console.log("🧹 CLEANUP: Clearing interval with ID:", interval);
+      clearInterval(interval);
+      //   console.log("✨ Interval cleared successfully");
+    };
+  }, [autoBackup, expenses, income]);
 
   // Calculate metrics
   const metrics = useMemo(
@@ -90,14 +140,19 @@ const App: React.FC = () => {
   // Handlers
   const handleExpenseSubmit = (expense: Expense, isRecurring: boolean) => {
     if (editingExpense) {
-      setExpenses(prev => prev.map(e => e.id === expense.id ? expense : e));
+      setExpenses((prev) =>
+        prev.map((e) => (e.id === expense.id ? expense : e))
+      );
     } else {
-      setExpenses(prev => [...prev, expense]);
+      setExpenses((prev) => [...prev, expense]);
       if (isRecurring) {
-        setRecurringExpenses(prev => [...prev, {
-          ...expense,
-          lastProcessed: expense.date
-        }]);
+        setRecurringExpenses((prev) => [
+          ...prev,
+          {
+            ...expense,
+            lastProcessed: expense.date,
+          },
+        ]);
       }
     }
     setExpenseModalOpen(false);
@@ -106,9 +161,11 @@ const App: React.FC = () => {
 
   const handleIncomeSubmit = (incomeData: Income) => {
     if (editingIncome) {
-      setIncome(prev => prev.map(i => i.id === incomeData.id ? incomeData : i));
+      setIncome((prev) =>
+        prev.map((i) => (i.id === incomeData.id ? incomeData : i))
+      );
     } else {
-      setIncome(prev => [...prev, incomeData]);
+      setIncome((prev) => [...prev, incomeData]);
     }
     setIncomeModalOpen(false);
     setEditingIncome(null);
@@ -120,7 +177,7 @@ const App: React.FC = () => {
   };
 
   const handleDeleteExpense = (id: number) => {
-    setExpenses(prev => prev.filter(e => e.id !== id));
+    setExpenses((prev) => prev.filter((e) => e.id !== id));
   };
 
   const handleExportData = () => {
@@ -128,11 +185,13 @@ const App: React.FC = () => {
   };
 
   const handleClearData = () => {
-    if (window.confirm('This will permanently delete all your data. Continue?')) {
+    if (
+      window.confirm("This will permanently delete all your data. Continue?")
+    ) {
       setExpenses([]);
       setIncome([]);
       setRecurringExpenses([]);
-      setMonthlyBudget(1500);
+      setMonthlyBudget(800);
     }
   };
 
@@ -141,11 +200,11 @@ const App: React.FC = () => {
       theme={theme}
       currentPage={currentPage}
       onPageChange={setCurrentPage}
-      onThemeToggle={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+      onThemeToggle={() => setTheme(theme === "dark" ? "light" : "dark")}
       onAddExpense={() => setExpenseModalOpen(true)}
     >
       {/* Page Content */}
-      {currentPage === 'home' && (
+      {currentPage === "home" && (
         <Dashboard
           metrics={metrics}
           expenses={expenses}
@@ -155,8 +214,8 @@ const App: React.FC = () => {
           onDeleteExpense={handleDeleteExpense}
         />
       )}
-      
-      {currentPage === 'reports' && (
+
+      {currentPage === "reports" && (
         <Analytics
           metrics={metrics}
           expenses={expenses}
@@ -164,8 +223,8 @@ const App: React.FC = () => {
           onExport={handleExportData}
         />
       )}
-      
-      {currentPage === 'settings' && (
+
+      {currentPage === "settings" && (
         <Settings
           theme={theme}
           setTheme={setTheme}
@@ -175,6 +234,8 @@ const App: React.FC = () => {
           setRecurringExpenses={setRecurringExpenses}
           onExport={handleExportData}
           onClearData={handleClearData}
+          autoBackup={autoBackup}
+          setAutoBackup={setAutoBackup}
         />
       )}
 

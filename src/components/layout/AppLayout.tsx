@@ -3,23 +3,23 @@
  * Responsive layout with navigation
  */
 
-import React, { useState } from 'react';
-import { 
-  LayoutDashboard, 
-  ChartBar, 
-  Settings, 
-//   Menu, 
-//   X, 
+import React, { useState } from "react";
+import {
+  LayoutDashboard,
+  ChartBar,
+  Settings,
+  //   Menu,
+  //   X,
   Plus,
   Sun,
   Moon,
-  Wallet
-} from 'lucide-react';
-import type { TabType } from '../../types';
+  Wallet,
+} from "lucide-react";
+import type { TabType } from "../../types";
 
 interface AppLayoutProps {
   children: React.ReactNode;
-  theme: 'light' | 'dark';
+  theme: "light" | "dark";
   currentPage: TabType;
   onPageChange: (page: TabType) => void;
   onThemeToggle: () => void;
@@ -32,19 +32,23 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   currentPage,
   onPageChange,
   onThemeToggle,
-  onAddExpense
+  onAddExpense,
 }) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navigation = [
-    { id: 'home' as TabType, label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'reports' as TabType, label: 'Analytics', icon: ChartBar },
-    { id: 'settings' as TabType, label: 'Settings', icon: Settings }
+    { id: "home" as TabType, label: "Dashboard", icon: LayoutDashboard },
+    { id: "reports" as TabType, label: "Analytics", icon: ChartBar },
+    { id: "settings" as TabType, label: "Settings", icon: Settings },
   ];
 
   return (
-    <div className={`min-h-screen ${theme === 'dark' ? 'dark bg-gray-950' : 'bg-gray-50'}`}>
+    <div
+      className={`min-h-screen ${
+        theme === "dark" ? "dark bg-gray-950" : "bg-gray-50"
+      }`}
+    >
       {/* Desktop Navigation - Top Bar */}
       <nav className="hidden lg:flex fixed top-0 left-0 right-0 h-16 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 z-50">
         <div className="w-full px-6 flex items-center justify-between">
@@ -54,13 +58,16 @@ const AppLayout: React.FC<AppLayoutProps> = ({
               <Wallet className="w-6 h-6 text-white" />
             </div>
             <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              ExpenseTracker
+              Expense
+              <span className="text-xl font-bold bg-gradient-to-r from-green-500 to-emerald-500 bg-clip-text text-transparent">
+                Tracker
+              </span>
             </span>
           </div>
 
           {/* Center Navigation */}
           <div className="flex items-center space-x-1">
-            {navigation.map(item => {
+            {navigation.map((item) => {
               const Icon = item.icon;
               const isActive = currentPage === item.id;
               return (
@@ -69,9 +76,10 @@ const AppLayout: React.FC<AppLayoutProps> = ({
                   onClick={() => onPageChange(item.id)}
                   className={`
                     px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2
-                    ${isActive 
-                      ? 'bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400' 
-                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+                    ${
+                      isActive
+                        ? "bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400"
+                        : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
                     }
                   `}
                 >
@@ -91,12 +99,16 @@ const AppLayout: React.FC<AppLayoutProps> = ({
               <Plus className="w-4 h-4" />
               Add Expense
             </button>
-            
+
             <button
               onClick={onThemeToggle}
               className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
             >
-              {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              {theme === "dark" ? (
+                <Sun className="w-5 h-5" />
+              ) : (
+                <Moon className="w-5 h-5" />
+              )}
             </button>
           </div>
         </div>
@@ -105,7 +117,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
       {/* Mobile Navigation - Bottom Tab Bar */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 z-50">
         <div className="grid grid-cols-3 h-16">
-          {navigation.map(item => {
+          {navigation.map((item) => {
             const Icon = item.icon;
             const isActive = currentPage === item.id;
             return (
@@ -114,9 +126,10 @@ const AppLayout: React.FC<AppLayoutProps> = ({
                 onClick={() => onPageChange(item.id)}
                 className={`
                   flex flex-col items-center justify-center space-y-1
-                  ${isActive 
-                    ? 'text-blue-600 dark:text-blue-400' 
-                    : 'text-gray-400 dark:text-gray-600'
+                  ${
+                    isActive
+                      ? "text-blue-600 dark:text-blue-400"
+                      : "text-gray-400 dark:text-gray-600"
                   }
                 `}
               >
@@ -134,21 +147,25 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
             <Wallet className="w-5 h-5 text-white" />
           </div>
-          <span className="font-bold text-gray-900 dark:text-white">ExpenseTracker</span>
+          <span className="font-bold text-gray-900 dark:text-white">
+            ExpenseTracker
+          </span>
         </div>
-        
+
         <button
           onClick={onThemeToggle}
           className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800"
         >
-          {theme === 'dark' ? <Sun className="w-4 h-4 text-gray-400" /> : <Moon className="w-4 h-4 text-gray-600" />}
+          {theme === "dark" ? (
+            <Sun className="w-4 h-4 text-gray-400" />
+          ) : (
+            <Moon className="w-4 h-4 text-gray-600" />
+          )}
         </button>
       </header>
 
       {/* Main Content */}
-      <main className="lg:pt-16 pt-14 pb-16 lg:pb-0">
-        {children}
-      </main>
+      <main className="lg:pt-16 pt-14 pb-16 lg:pb-0">{children}</main>
 
       {/* Mobile FAB */}
       <button

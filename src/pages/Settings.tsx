@@ -3,22 +3,22 @@
  * Clean, organized settings interface
  */
 
-import React, { useState } from 'react';
-import { 
-  Moon, 
-  Sun, 
-  Download, 
-  Trash2, 
-  RefreshCw, 
+import React, { useState } from "react";
+import {
+  Moon,
+  Sun,
+  Download,
+  Trash2,
+  RefreshCw,
   Save,
   Shield,
   Database,
   Bell,
   CreditCard,
-  CheckCircle
-} from 'lucide-react';
-import type { SettingsProps } from '../types';
-import { getCategoryById } from '../utils/metrics';
+  CheckCircle,
+} from "lucide-react";
+import type { SettingsProps } from "../types";
+import { getCategoryById } from "../utils/metrics";
 
 const Settings: React.FC<SettingsProps> = ({
   theme,
@@ -28,12 +28,14 @@ const Settings: React.FC<SettingsProps> = ({
   recurringExpenses,
   setRecurringExpenses,
   onExport,
-  onClearData
+  onClearData,
+  autoBackup,
+  setAutoBackup,
 }) => {
   const [budgetInput, setBudgetInput] = useState(monthlyBudget.toString());
   const [showSuccess, setShowSuccess] = useState(false);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [autoBackup, setAutoBackup] = useState(false);
+  //   const [autoBackup, setAutoBackup] = useState(false);
 
   const handleBudgetUpdate = () => {
     const newBudget = parseFloat(budgetInput);
@@ -45,11 +47,15 @@ const Settings: React.FC<SettingsProps> = ({
   };
 
   const removeRecurring = (id: number) => {
-    setRecurringExpenses(recurringExpenses.filter(e => e.id !== id));
+    setRecurringExpenses(recurringExpenses.filter((e) => e.id !== id));
   };
 
   const handleClearData = () => {
-    if (window.confirm('⚠️ This action cannot be undone. All your data will be permanently deleted. Continue?')) {
+    if (
+      window.confirm(
+        "⚠️ This action cannot be undone. All your data will be permanently deleted. Continue?"
+      )
+    ) {
       onClearData();
     }
   };
@@ -81,7 +87,11 @@ const Settings: React.FC<SettingsProps> = ({
           {/* Appearance */}
           <div className="bg-white dark:bg-gray-900 p-6 rounded-xl border border-gray-200 dark:border-gray-800">
             <div className="flex items-center gap-2 mb-4">
-              {theme === 'dark' ? <Moon className="w-5 h-5 text-blue-500" /> : <Sun className="w-5 h-5 text-yellow-500" />}
+              {theme === "dark" ? (
+                <Moon className="w-5 h-5 text-blue-500" />
+              ) : (
+                <Sun className="w-5 h-5 text-yellow-500" />
+              )}
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                 Appearance
               </h2>
@@ -91,26 +101,30 @@ const Settings: React.FC<SettingsProps> = ({
             </p>
             <div className="flex gap-2">
               <button
-                onClick={() => setTheme('light')}
+                onClick={() => setTheme("light")}
                 className={`flex-1 p-3 rounded-lg border-2 transition-all ${
-                  theme === 'light' 
-                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-950' 
-                    : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                  theme === "light"
+                    ? "border-blue-500 bg-blue-50 dark:bg-blue-950"
+                    : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
                 }`}
               >
                 <Sun className="w-5 h-5 mx-auto mb-1 text-yellow-500" />
-                <span className="text-sm text-gray-700 dark:text-gray-300">Light</span>
+                <span className="text-sm text-gray-700 dark:text-gray-300">
+                  Light
+                </span>
               </button>
               <button
-                onClick={() => setTheme('dark')}
+                onClick={() => setTheme("dark")}
                 className={`flex-1 p-3 rounded-lg border-2 transition-all ${
-                  theme === 'dark' 
-                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-950' 
-                    : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                  theme === "dark"
+                    ? "border-blue-500 bg-blue-50 dark:bg-blue-950"
+                    : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
                 }`}
               >
                 <Moon className="w-5 h-5 mx-auto mb-1 text-blue-500" />
-                <span className="text-sm text-gray-700 dark:text-gray-300">Dark</span>
+                <span className="text-sm text-gray-700 dark:text-gray-300">
+                  Dark
+                </span>
               </button>
             </div>
           </div>
@@ -128,7 +142,9 @@ const Settings: React.FC<SettingsProps> = ({
             </p>
             <div className="flex gap-2">
               <div className="relative flex-1">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+                  $
+                </span>
                 <input
                   type="number"
                   value={budgetInput}
@@ -157,8 +173,12 @@ const Settings: React.FC<SettingsProps> = ({
             <div className="space-y-3">
               <label className="flex items-center justify-between cursor-pointer">
                 <div>
-                  <p className="font-medium text-gray-700 dark:text-gray-300">Budget Alerts</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Get notified when near budget limit</p>
+                  <p className="font-medium text-gray-700 dark:text-gray-300">
+                    Budget Alerts
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Get notified when near budget limit
+                  </p>
                 </div>
                 <input
                   type="checkbox"
@@ -169,8 +189,12 @@ const Settings: React.FC<SettingsProps> = ({
               </label>
               <label className="flex items-center justify-between cursor-pointer">
                 <div>
-                  <p className="font-medium text-gray-700 dark:text-gray-300">Auto Backup</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Automatically backup data weekly</p>
+                  <p className="font-medium text-gray-700 dark:text-gray-300">
+                    Auto Backup
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Automatically backup data weekly
+                  </p>
                 </div>
                 <input
                   type="checkbox"
@@ -211,7 +235,7 @@ const Settings: React.FC<SettingsProps> = ({
                 {recurringExpenses.length} active
               </span>
             </div>
-            
+
             {recurringExpenses.length === 0 ? (
               <div className="text-center py-8">
                 <RefreshCw className="w-12 h-12 text-gray-300 dark:text-gray-700 mx-auto mb-3" />
@@ -224,10 +248,10 @@ const Settings: React.FC<SettingsProps> = ({
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {recurringExpenses.map(expense => {
+                {recurringExpenses.map((expense) => {
                   const category = getCategoryById(expense.category);
                   return (
-                    <div 
+                    <div
                       key={expense.id}
                       className="flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                     >
@@ -293,9 +317,7 @@ const Settings: React.FC<SettingsProps> = ({
           {/* About */}
           <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-6 rounded-xl text-white lg:col-span-2">
             <h2 className="text-lg font-semibold mb-2">About ExpenseTracker</h2>
-            <p className="text-sm opacity-90 mb-4">
-              Version 3.0 - Complete Redesign
-            </p>
+            <p className="text-sm opacity-90 mb-4">Version 1.0</p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
               <div>
                 <p className="font-medium mb-1">Built with</p>
@@ -303,11 +325,13 @@ const Settings: React.FC<SettingsProps> = ({
               </div>
               <div>
                 <p className="font-medium mb-1">Features</p>
-                <p className="opacity-80">Real-time tracking, Analytics, Dark mode</p>
+                <p className="opacity-80">
+                  Real-time tracking, Analytics, Dark mode
+                </p>
               </div>
               <div>
                 <p className="font-medium mb-1">Support</p>
-                <p className="opacity-80">Made for students, by developers</p>
+                <p className="opacity-80">Made for students, by Shubhank T.</p>
               </div>
             </div>
           </div>
