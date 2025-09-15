@@ -195,7 +195,7 @@ const App: React.FC = () => {
     }
   };
 
-  console.log("metrics:", metrics);
+  //   console.log("metrics:", metrics);
 
   return (
     <AppLayout
