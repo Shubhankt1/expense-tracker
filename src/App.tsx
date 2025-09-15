@@ -17,9 +17,9 @@ import Settings from "./pages/Settings";
 import Analytics from "./pages/Analytics";
 
 // Modal Components
-import Dashboard from "./components/backup/Dashboard";
 import IncomeModal from "./components/modals/IncomeModal";
 import ExpenseModal from "./components/modals/ExpenseModal";
+import Dashboard from "./pages/Dashboard";
 
 const App: React.FC = () => {
   // Persistent State
@@ -110,7 +110,7 @@ const App: React.FC = () => {
       const lastBackupDate = lastBackup ? new Date(lastBackup) : null;
       const now = new Date();
 
-      // If no previous backup or more than 7 days ago
+      // If no previous backup or more than 3 days ago
       if (
         !lastBackupDate ||
         now.getTime() - lastBackupDate.getTime() > 3 * 24 * 60 * 60 * 1000
@@ -194,6 +194,8 @@ const App: React.FC = () => {
       setMonthlyBudget(800);
     }
   };
+
+  console.log("metrics:", metrics);
 
   return (
     <AppLayout

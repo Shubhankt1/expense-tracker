@@ -36,6 +36,8 @@ export interface Metrics {
   totalMonthExpenses: number;
   totalWeekExpenses: number;
   totalMonthIncome: number;
+  totalLastMonthIncome: number;
+  percentChangeIncome: number;
   remainingBudget: number;
   budgetPercentage: number;
   categoryTotals: CategoryTotal[];
@@ -87,6 +89,8 @@ export interface SettingsProps {
   setRecurringExpenses: (expenses: RecurringExpense[]) => void;
   onExport: () => void;
   onClearData: () => void;
+  autoBackup: boolean;
+  setAutoBackup: (value: boolean) => void;
 }
 
 // Navigation Types

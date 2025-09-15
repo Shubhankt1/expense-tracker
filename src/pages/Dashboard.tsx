@@ -3,20 +3,19 @@
  * Clean, modern dashboard with excellent UX
  */
 
-import React from 'react';
-import { 
-  TrendingUp, 
-  TrendingDown, 
-  DollarSign, 
+import React from "react";
+import {
+  TrendingUp,
+  TrendingDown,
+  DollarSign,
   Calendar,
   AlertTriangle,
   Edit2,
-  Trash2
-} from 'lucide-react';
+  Trash2,
+} from "lucide-react";
 
-import type { DashboardProps } from '../types';
-import { getCategoryById } from '../utils/metrics';
-
+import type { DashboardProps } from "../types";
+import { getCategoryById } from "../utils/metrics";
 
 const Dashboard: React.FC<DashboardProps> = ({
   metrics,
@@ -24,7 +23,7 @@ const Dashboard: React.FC<DashboardProps> = ({
   onAddExpense,
   onAddIncome,
   onEditExpense,
-  onDeleteExpense
+  onDeleteExpense,
 }) => {
   const recentTransactions = expenses.slice(-8).reverse();
 
@@ -37,7 +36,11 @@ const Dashboard: React.FC<DashboardProps> = ({
             Welcome back! 👋
           </h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1">
-            Here's your financial overview for {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+            Here's your financial overview for{" "}
+            {new Date().toLocaleDateString("en-US", {
+              month: "long",
+              year: "numeric",
+            })}
           </p>
         </div>
 
@@ -46,9 +49,12 @@ const Dashboard: React.FC<DashboardProps> = ({
           <div className="mb-6 p-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 rounded-xl flex items-start gap-3">
             <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-500 mt-0.5" />
             <div>
-              <h3 className="font-semibold text-red-900 dark:text-red-400">Budget Alert</h3>
+              <h3 className="font-semibold text-red-900 dark:text-red-400">
+                Budget Alert
+              </h3>
               <p className="text-sm text-red-700 dark:text-red-500 mt-0.5">
-                You've used {metrics.budgetPercentage.toFixed(0)}% of your monthly budget. Consider reducing spending.
+                You've used {metrics.budgetPercentage.toFixed(0)}% of your
+                monthly budget. Consider reducing spending.
               </p>
             </div>
           </div>
@@ -63,10 +69,14 @@ const Dashboard: React.FC<DashboardProps> = ({
                 <TrendingUp className="w-5 h-5 text-green-600 dark:text-green-500" />
               </div>
               <span className="text-xs font-medium text-green-600 dark:text-green-500">
-                +12% from last month
+                {isFinite(metrics.percentChangeIncome) &&
+                  !isNaN(metrics.percentChangeIncome) &&
+                  `${metrics.percentChangeIncome}% from last month`}
               </span>
             </div>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Total Income</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+              Total Income
+            </p>
             <p className="text-2xl font-bold text-gray-900 dark:text-white">
               ${metrics.totalMonthIncome.toFixed(2)}
             </p>
@@ -82,7 +92,9 @@ const Dashboard: React.FC<DashboardProps> = ({
                 This month
               </span>
             </div>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Total Expenses</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+              Total Expenses
+            </p>
             <p className="text-2xl font-bold text-gray-900 dark:text-white">
               ${metrics.totalMonthExpenses.toFixed(2)}
             </p>
@@ -94,17 +106,26 @@ const Dashboard: React.FC<DashboardProps> = ({
               <div className="p-2 bg-blue-100 dark:bg-blue-950 rounded-lg">
                 <DollarSign className="w-5 h-5 text-blue-600 dark:text-blue-500" />
               </div>
-              <span className={`text-xs font-medium ${
-                metrics.totalMonthIncome - metrics.totalMonthExpenses >= 0 
-                  ? 'text-green-600 dark:text-green-500' 
-                  : 'text-red-600 dark:text-red-500'
-              }`}>
-                {metrics.totalMonthIncome - metrics.totalMonthExpenses >= 0 ? 'Positive' : 'Negative'}
+              <span
+                className={`text-xs font-medium ${
+                  metrics.totalMonthIncome - metrics.totalMonthExpenses >= 0
+                    ? "text-green-600 dark:text-green-500"
+                    : "text-red-600 dark:text-red-500"
+                }`}
+              >
+                {metrics.totalMonthIncome - metrics.totalMonthExpenses >= 0
+                  ? "Positive"
+                  : "Negative"}
               </span>
             </div>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Net Balance</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+              Net Balance
+            </p>
             <p className="text-2xl font-bold text-gray-900 dark:text-white">
-              ${Math.abs(metrics.totalMonthIncome - metrics.totalMonthExpenses).toFixed(2)}
+              $
+              {Math.abs(
+                metrics.totalMonthIncome - metrics.totalMonthExpenses
+              ).toFixed(2)}
             </p>
           </div>
 
@@ -118,7 +139,9 @@ const Dashboard: React.FC<DashboardProps> = ({
                 This week
               </span>
             </div>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Weekly Spending</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+              Weekly Spending
+            </p>
             <p className="text-2xl font-bold text-gray-900 dark:text-white">
               ${metrics.totalWeekExpenses.toFixed(2)}
             </p>
@@ -136,20 +159,25 @@ const Dashboard: React.FC<DashboardProps> = ({
               <div>
                 <div className="flex justify-between mb-2">
                   <span className="text-sm text-gray-500 dark:text-gray-400">
-                    ${metrics.totalMonthExpenses.toFixed(0)} of ${metrics.monthlyBudget}
+                    ${metrics.totalMonthExpenses.toFixed(0)} of $
+                    {metrics.monthlyBudget}
                   </span>
                   <span className="text-sm font-medium text-gray-900 dark:text-white">
                     {metrics.budgetPercentage.toFixed(0)}%
                   </span>
                 </div>
                 <div className="w-full h-3 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
-                  <div 
+                  <div
                     className={`h-full transition-all ${
-                      metrics.budgetPercentage > 90 ? 'bg-red-500' :
-                      metrics.budgetPercentage > 70 ? 'bg-yellow-500' :
-                      'bg-green-500'
+                      metrics.budgetPercentage > 90
+                        ? "bg-red-500"
+                        : metrics.budgetPercentage > 70
+                        ? "bg-yellow-500"
+                        : "bg-green-500"
                     }`}
-                    style={{ width: `${Math.min(metrics.budgetPercentage, 100)}%` }}
+                    style={{
+                      width: `${Math.min(metrics.budgetPercentage, 100)}%`,
+                    }}
                   />
                 </div>
               </div>
@@ -160,11 +188,14 @@ const Dashboard: React.FC<DashboardProps> = ({
                   By Category
                 </h3>
                 <div className="space-y-2">
-                  {metrics.categoryTotals.map(cat => (
-                    <div key={cat.name} className="flex items-center justify-between">
+                  {metrics.categoryTotals.map((cat) => (
+                    <div
+                      key={cat.name}
+                      className="flex items-center justify-between"
+                    >
                       <div className="flex items-center gap-2">
-                        <div 
-                          className="w-3 h-3 rounded-full" 
+                        <div
+                          className="w-3 h-3 rounded-full"
                           style={{ backgroundColor: cat.color }}
                         />
                         <span className="text-sm text-gray-600 dark:text-gray-400">
@@ -191,7 +222,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                 View all
               </button>
             </div>
-            
+
             <div className="space-y-3">
               {recentTransactions.length === 0 ? (
                 <div className="text-center py-12">
@@ -206,10 +237,10 @@ const Dashboard: React.FC<DashboardProps> = ({
                   </button>
                 </div>
               ) : (
-                recentTransactions.map(expense => {
+                recentTransactions.map((expense) => {
                   const category = getCategoryById(expense.category);
                   return (
-                    <div 
+                    <div
                       key={expense.id}
                       className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group"
                     >

@@ -29,6 +29,7 @@ export function calculateMetrics(
 ): Metrics {
   const now = new Date();
   const currentMonth = now.getMonth();
+  const lastMonth = (currentMonth - 1 + 12) % 12;
   const currentYear = now.getFullYear();
   const currentWeek = Math.floor((now.getDate() - 1) / 7);
 
@@ -59,6 +60,14 @@ export function calculateMetrics(
     );
   });
 
+  // Filter last month income
+  const lastMonthIncome = income.filter((i) => {
+    const date = new Date(i.date);
+    return lastMonth === 11
+      ? date.getMonth() === lastMonth && date.getFullYear() === currentYear - 1
+      : date.getMonth() === lastMonth && date.getFullYear() === currentYear;
+  });
+
   // Calculate totals
   const totalMonthExpenses = monthExpenses.reduce(
     (sum, e) => sum + e.amount,
@@ -66,6 +75,12 @@ export function calculateMetrics(
   );
   const totalWeekExpenses = weekExpenses.reduce((sum, e) => sum + e.amount, 0);
   const totalMonthIncome = monthIncome.reduce((sum, i) => sum + i.amount, 0);
+  const totalLastMonthIncome = lastMonthIncome.reduce(
+    (sum, i) => sum + i.amount,
+    0
+  );
+  const percentChangeIncome =
+    (totalMonthIncome / totalLastMonthIncome - 1) * 100;
   const remainingBudget = monthlyBudget - totalMonthExpenses;
   const budgetPercentage = (totalMonthExpenses / monthlyBudget) * 100;
 
@@ -79,6 +94,8 @@ export function calculateMetrics(
     totalMonthExpenses,
     totalWeekExpenses,
     totalMonthIncome,
+    totalLastMonthIncome,
+    percentChangeIncome,
     remainingBudget,
     budgetPercentage,
     categoryTotals,
