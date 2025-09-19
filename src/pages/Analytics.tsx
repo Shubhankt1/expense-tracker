@@ -3,7 +3,7 @@
  * Data visualization with clean charts
  */
 
-import React from 'react';
+import React from "react";
 import {
   LineChart,
   Line,
@@ -17,17 +17,21 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-} from 'recharts';
+} from "recharts";
 
-import { Download, TrendingUp, DollarSign, Calendar } from 'lucide-react';
+import { Download, TrendingUp, DollarSign, Calendar } from "lucide-react";
 
-import type { AnalyticsProps } from '../types';
+import type { AnalyticsProps } from "../types";
 
-const Analytics: React.FC<AnalyticsProps> = ({ metrics, expenses, income, onExport }) => {
+const Analytics: React.FC<AnalyticsProps> = ({
+  metrics,
+  expenses,
+  onExport,
+}) => {
   // Prepare data for charts
   const monthlyData = [
-    { name: 'Income', value: metrics.totalMonthIncome, fill: '#10B981' },
-    { name: 'Expenses', value: metrics.totalMonthExpenses, fill: '#EF4444' }
+    { name: "Income", value: metrics.totalMonthIncome, fill: "#10B981" },
+    { name: "Expenses", value: metrics.totalMonthExpenses, fill: "#EF4444" },
   ];
 
   // Custom tooltip
@@ -71,34 +75,46 @@ const Analytics: React.FC<AnalyticsProps> = ({ metrics, expenses, income, onExpo
           <div className="bg-white dark:bg-gray-900 p-6 rounded-xl border border-gray-200 dark:border-gray-800">
             <div className="flex items-center justify-between mb-2">
               <TrendingUp className="w-5 h-5 text-blue-500" />
-              <span className="text-xs text-gray-500 dark:text-gray-400">Average</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400">
+                Average
+              </span>
             </div>
             <p className="text-2xl font-bold text-gray-900 dark:text-white">
               ${(metrics.totalMonthExpenses / 30).toFixed(2)}
             </p>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Daily spending</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              Daily spending
+            </p>
           </div>
 
           <div className="bg-white dark:bg-gray-900 p-6 rounded-xl border border-gray-200 dark:border-gray-800">
             <div className="flex items-center justify-between mb-2">
               <DollarSign className="w-5 h-5 text-green-500" />
-              <span className="text-xs text-gray-500 dark:text-gray-400">Total</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400">
+                Total
+              </span>
             </div>
             <p className="text-2xl font-bold text-gray-900 dark:text-white">
               {expenses.length}
             </p>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Transactions</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              Transactions
+            </p>
           </div>
 
           <div className="bg-white dark:bg-gray-900 p-6 rounded-xl border border-gray-200 dark:border-gray-800">
             <div className="flex items-center justify-between mb-2">
               <Calendar className="w-5 h-5 text-purple-500" />
-              <span className="text-xs text-gray-500 dark:text-gray-400">Highest</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400">
+                Highest
+              </span>
             </div>
             <p className="text-2xl font-bold text-gray-900 dark:text-white">
-              {metrics.categoryTotals[0]?.name || 'N/A'}
+              {metrics.categoryTotals[0]?.name || "N/A"}
             </p>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Top category</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              Top category
+            </p>
           </div>
         </div>
 
@@ -112,22 +128,19 @@ const Analytics: React.FC<AnalyticsProps> = ({ metrics, expenses, income, onExpo
             <ResponsiveContainer width="100%" height={250}>
               <LineChart data={metrics.trendData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                <XAxis 
-                  dataKey="date" 
+                <XAxis
+                  dataKey="date"
                   stroke="#9CA3AF"
                   style={{ fontSize: 12 }}
                 />
-                <YAxis 
-                  stroke="#9CA3AF"
-                  style={{ fontSize: 12 }}
-                />
+                <YAxis stroke="#9CA3AF" style={{ fontSize: 12 }} />
                 <Tooltip content={customTooltip} />
-                <Line 
-                  type="monotone" 
-                  dataKey="amount" 
-                  stroke="#3B82F6" 
+                <Line
+                  type="monotone"
+                  dataKey="amount"
+                  stroke="#3B82F6"
                   strokeWidth={2}
-                  dot={{ fill: '#3B82F6', r: 4 }}
+                  dot={{ fill: "#3B82F6", r: 4 }}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -157,11 +170,19 @@ const Analytics: React.FC<AnalyticsProps> = ({ metrics, expenses, income, onExpo
               </PieChart>
             </ResponsiveContainer>
             <div className="grid grid-cols-2 gap-2 mt-4">
-              {metrics.categoryTotals.map(cat => (
-                <div key={cat.name} className="flex items-center justify-between text-sm">
+              {metrics.categoryTotals.map((cat) => (
+                <div
+                  key={cat.name}
+                  className="flex items-center justify-between text-sm"
+                >
                   <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded" style={{ backgroundColor: cat.color }} />
-                    <span className="text-gray-600 dark:text-gray-400">{cat.name}</span>
+                    <div
+                      className="w-3 h-3 rounded"
+                      style={{ backgroundColor: cat.color }}
+                    />
+                    <span className="text-gray-600 dark:text-gray-400">
+                      {cat.name}
+                    </span>
                   </div>
                   <span className="font-medium text-gray-900 dark:text-white">
                     ${cat.value.toFixed(0)}
@@ -179,15 +200,12 @@ const Analytics: React.FC<AnalyticsProps> = ({ metrics, expenses, income, onExpo
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={monthlyData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                <XAxis 
-                  dataKey="name" 
+                <XAxis
+                  dataKey="name"
                   stroke="#9CA3AF"
                   style={{ fontSize: 12 }}
                 />
-                <YAxis 
-                  stroke="#9CA3AF"
-                  style={{ fontSize: 12 }}
-                />
+                <YAxis stroke="#9CA3AF" style={{ fontSize: 12 }} />
                 <Tooltip content={customTooltip} />
                 <Bar dataKey="value" radius={[8, 8, 0, 0]} />
               </BarChart>

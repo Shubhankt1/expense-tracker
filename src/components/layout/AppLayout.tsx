@@ -3,7 +3,7 @@
  * Responsive layout with navigation
  */
 
-import React, { useState } from "react";
+// import React, { useState } from "react";
 import {
   LayoutDashboard,
   ChartBar,
@@ -15,6 +15,7 @@ import {
   Moon,
   Wallet,
 } from "lucide-react";
+
 import type { TabType } from "../../types";
 
 interface AppLayoutProps {
@@ -34,9 +35,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   onThemeToggle,
   onAddExpense,
 }) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   const navigation = [
     { id: "home" as TabType, label: "Dashboard", icon: LayoutDashboard },
     { id: "reports" as TabType, label: "Analytics", icon: ChartBar },

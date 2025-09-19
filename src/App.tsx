@@ -6,19 +6,19 @@
 import { exportToCSV } from "./utils/csvExport";
 import { calculateMetrics } from "./utils/metrics";
 import { useLocalStorage } from "./hooks/useLocalStorage";
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, lazy, Suspense } from "react";
 import type { Expense, Income, RecurringExpense, TabType } from "./types";
 
 // Layout Components
 import AppLayout from "./components/layout/AppLayout";
 
 // Page Components
-import Settings from "./pages/Settings";
-import Analytics from "./pages/Analytics";
+const Settings = lazy(() => import("./pages/Settings"));
+const Analytics = lazy(() => import("./pages/Analytics"));
 
 // Modal Components
-import IncomeModal from "./components/modals/IncomeModal";
-import ExpenseModal from "./components/modals/ExpenseModal";
+const ExpenseModal = lazy(() => import("./components/modals/ExpenseModal"));
+const IncomeModal = lazy(() => import("./components/modals/IncomeModal"));
 import Dashboard from "./pages/Dashboard";
 
 const App: React.FC = () => {
@@ -205,64 +205,76 @@ const App: React.FC = () => {
       onThemeToggle={() => setTheme(theme === "dark" ? "light" : "dark")}
       onAddExpense={() => setExpenseModalOpen(true)}
     >
-      {/* Page Content */}
-      {currentPage === "home" && (
-        <Dashboard
-          metrics={metrics}
-          expenses={expenses}
-          onAddExpense={() => setExpenseModalOpen(true)}
-          onAddIncome={() => setIncomeModalOpen(true)}
-          onEditExpense={handleEditExpense}
-          onDeleteExpense={handleDeleteExpense}
-        />
-      )}
+      <Suspense
+        fallback={
+          <div className="flex items-center justify-center h-64">
+            <div className="text-gray-500">Loading...</div>
+          </div>
+        }
+      >
+        {/* Page Content */}
+        {currentPage === "home" && (
+          <Dashboard
+            metrics={metrics}
+            expenses={expenses}
+            onAddExpense={() => setExpenseModalOpen(true)}
+            onAddIncome={() => setIncomeModalOpen(true)}
+            onEditExpense={handleEditExpense}
+            onDeleteExpense={handleDeleteExpense}
+          />
+        )}
 
-      {currentPage === "reports" && (
-        <Analytics
-          metrics={metrics}
-          expenses={expenses}
-          income={income}
-          onExport={handleExportData}
-        />
-      )}
+        {currentPage === "reports" && (
+          <Analytics
+            metrics={metrics}
+            expenses={expenses}
+            income={income}
+            onExport={handleExportData}
+          />
+        )}
 
-      {currentPage === "settings" && (
-        <Settings
-          theme={theme}
-          setTheme={setTheme}
-          monthlyBudget={monthlyBudget}
-          setMonthlyBudget={setMonthlyBudget}
-          recurringExpenses={recurringExpenses}
-          setRecurringExpenses={setRecurringExpenses}
-          onExport={handleExportData}
-          onClearData={handleClearData}
-          autoBackup={autoBackup}
-          setAutoBackup={setAutoBackup}
-        />
-      )}
+        {currentPage === "settings" && (
+          <Settings
+            theme={theme}
+            setTheme={setTheme}
+            monthlyBudget={monthlyBudget}
+            setMonthlyBudget={setMonthlyBudget}
+            recurringExpenses={recurringExpenses}
+            setRecurringExpenses={setRecurringExpenses}
+            onExport={handleExportData}
+            onClearData={handleClearData}
+            autoBackup={autoBackup}
+            setAutoBackup={setAutoBackup}
+          />
+        )}
 
-      {/* Modals */}
-      {expenseModalOpen && (
-        <ExpenseModal
-          expense={editingExpense}
-          onSubmit={handleExpenseSubmit}
-          onClose={() => {
-            setExpenseModalOpen(false);
-            setEditingExpense(null);
-          }}
-        />
-      )}
+        {/* Modals */}
+        {expenseModalOpen && (
+          <Suspense
+            fallback={<div className="fixed inset-0 bg-black/50 z-50" />}
+          >
+            <ExpenseModal
+              expense={editingExpense}
+              onSubmit={handleExpenseSubmit}
+              onClose={() => {
+                setExpenseModalOpen(false);
+                setEditingExpense(null);
+              }}
+            />
+          </Suspense>
+        )}
 
-      {incomeModalOpen && (
-        <IncomeModal
-          income={editingIncome}
-          onSubmit={handleIncomeSubmit}
-          onClose={() => {
-            setIncomeModalOpen(false);
-            setEditingIncome(null);
-          }}
-        />
-      )}
+        {incomeModalOpen && (
+          <IncomeModal
+            income={editingIncome}
+            onSubmit={handleIncomeSubmit}
+            onClose={() => {
+              setIncomeModalOpen(false);
+              setEditingIncome(null);
+            }}
+          />
+        )}
+      </Suspense>
     </AppLayout>
   );
 };
