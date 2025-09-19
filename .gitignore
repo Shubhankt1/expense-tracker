@@ -23,7 +23,7 @@ lerna-debug.log*
 .env.*.local
 
 # Package manager lockfiles (optional — keep if you want reproducible installs)
-package-lock.json
+# package-lock.json
 yarn.lock
 pnpm-lock.yaml
 

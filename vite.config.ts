@@ -9,5 +9,13 @@ export default defineConfig({
   build: {
     sourcemap: true,
     minify: "esbuild",
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "react-vendor": ["react", "react-dom"],
+          "chart-vendor": ["recharts"],
+        },
+      },
+    },
   },
 });
